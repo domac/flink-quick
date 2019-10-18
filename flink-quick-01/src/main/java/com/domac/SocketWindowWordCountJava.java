@@ -34,7 +34,7 @@ public class SocketWindowWordCountJava {
                     out.collect(new WorldWithCount(word, 1L));
                 }
             }
-        }).keyBy("word").timeWindow(Time.seconds(2), Time.seconds(1)).sum("count");
+        }).keyBy("word").timeWindow(Time.seconds(1), Time.seconds(1)).sum("count");
 
         windowCounts.print().setParallelism(1);
         env.execute("Socket window count");
@@ -57,7 +57,7 @@ public class SocketWindowWordCountJava {
         @Override
         public String toString() {
             return "WorldWithCount{" +
-                    "word='" + word + "', coun=" + count + "}";
+                    "word='" + word + "', count=" + count + "}";
         }
     }
 }
