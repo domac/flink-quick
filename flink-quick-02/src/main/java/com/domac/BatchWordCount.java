@@ -10,7 +10,7 @@ import org.apache.flink.util.Collector;
 
 import java.io.File;
 
-public class BatchWordCountJava {
+public class BatchWordCount {
 
     public static void main(String[] args) throws Exception {
         String input = "";

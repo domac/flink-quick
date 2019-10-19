@@ -9,7 +9,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.util.Collector;
 
-public class SocketWindowWordCountJava {
+public class SocketWindowWordCount {
 
     public static void main(String[] args) throws Exception {
         int port;
@@ -65,7 +65,7 @@ public class SocketWindowWordCountJava {
 
         @Override
         public String toString() {
-            return "WordWithCount {" +
+            return "WordWithCount => {" +
                     "word='" + word + "', count=" + count + "}";
         }
     }
