@@ -17,17 +17,15 @@ public class SocketWindowWordCountJava {
             ParameterTool parameterTool = ParameterTool.fromArgs(args);
             port = parameterTool.getInt("port");
         } catch (Exception e) {
-            System.err.println("No port set. use default port 9000--Java");
-            port = 9000;
+            System.err.println("No port set. use default port 9090");
+            port = 9090;
         }
 
         //获取Flink的执行环境
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         String hostname = "localhost";
-        String delimter = "\n";
-
         //获取source
-        DataStreamSource<String> text = env.socketTextStream(hostname, port, delimter);
+        DataStreamSource<String> text = env.socketTextStream(hostname, port, "\n");
 
         DataStream<WordWithCount> windowCounts = text.flatMap(new FlatMapFunction<String, WordWithCount>() {
             public void flatMap(String value, Collector<WordWithCount> out) throws Exception {
