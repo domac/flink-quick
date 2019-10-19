@@ -12,7 +12,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>flink-quick-01</module>    
+        <module>flink-quick-01</module>
+        <module>flink-quick-02</module>
     </modules>
 
     <properties>
