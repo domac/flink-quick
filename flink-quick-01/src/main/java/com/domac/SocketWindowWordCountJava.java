@@ -25,38 +25,41 @@ public class SocketWindowWordCountJava {
         String hostname = "localhost";
         String delimter = "\n";
 
+        //获取source
         DataStreamSource<String> text = env.socketTextStream(hostname, port, delimter);
 
-        DataStream<WorldWithCount> windowCounts = text.flatMap(new FlatMapFunction<String, WorldWithCount>() {
-            public void flatMap(String value, Collector<WorldWithCount> out) throws Exception {
+        DataStream<WordWithCount> windowCounts = text.flatMap(new FlatMapFunction<String, WordWithCount>() {
+            public void flatMap(String value, Collector<WordWithCount> out) throws Exception {
                 String[] splits = value.split("\\s");
                 for (String word : splits) {
-                    out.collect(new WorldWithCount(word, 1L));
+                    out.collect(new WordWithCount(word, 1L));
                 }
             }
         }).keyBy("word").timeWindow(Time.seconds(1), Time.seconds(1)).sum("count");
 
         windowCounts.print().setParallelism(1);
+
+        //执行
         env.execute("Socket window count");
     }
 
 
-    public static class WorldWithCount {
+    public static class WordWithCount {
 
         public String word;
         public long count;
 
-        public WorldWithCount(String word, long count) {
+        public WordWithCount(String word, long count) {
             this.word = word;
             this.count = count;
         }
 
-        public WorldWithCount() {
+        public WordWithCount() {
         }
 
         @Override
         public String toString() {
-            return "WorldWithCount{" +
+            return "WordWithCount {" +
                     "word='" + word + "', count=" + count + "}";
         }
     }
