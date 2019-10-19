@@ -1,6 +1,7 @@
 package com.domac;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
+import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
@@ -35,12 +36,19 @@ public class SocketWindowWordCountJava {
                     out.collect(new WordWithCount(word, 1L));
                 }
             }
-        }).keyBy("word").timeWindow(Time.seconds(1), Time.seconds(1)).sum("count");
+        }).keyBy("word").timeWindow(Time.seconds(1), Time.seconds(1))
+                //.sum("count");
+                .reduce(new ReduceFunction<WordWithCount>() {
+                    @Override
+                    public WordWithCount reduce(WordWithCount a, WordWithCount b) throws Exception {
+                        return new WordWithCount(a.word, a.count + b.count);
+                    }
+                });
 
         windowCounts.print().setParallelism(1);
 
         //执行
-        env.execute("Socket window count");
+        env.execute("Socket window word-count");
     }
 
 
