@@ -1,18 +1,22 @@
 package com.domac;
 
+import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.serialization.DeserializationSchema;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.typeutils.TypeExtractor;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer011;
+import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer011;
 
 import java.io.IOException;
 import java.util.Properties;
 
 /**
  * ./kafka-console-producer.sh --broker-list 192.168.159.130:9092 --topic my_test_topic
+ * <p>
+ * ./kafka-console-consumer.sh --bootstrap-server 192.168.159.130:9092 --topic your_test_topic --from-beginning
  */
 public class SimpleStreamingFromKafka {
 
@@ -21,6 +25,7 @@ public class SimpleStreamingFromKafka {
         String kafkaTopic = "my_test_topic";
         String kafkaBrokers = "192.168.159.130:9092";
         String kafkaGroup = "my-test-group";
+        String kafkaProdTopic = "your_test_topic";
 
         //创建运行环境
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
@@ -35,11 +40,22 @@ public class SimpleStreamingFromKafka {
         //DataStream<String> stream = env.addSource(flinkKafkaConsumer);
 
         //自定义Schema的方式
-        FlinkKafkaConsumer<Message> flinkKafkaConsumer = new FlinkKafkaConsumer<>(kafkaTopic, new MessageDeserializer(), properties);
+        FlinkKafkaConsumer011<Message> flinkKafkaConsumer = new FlinkKafkaConsumer011<>(kafkaTopic, new MessageDeserializer(), properties);
         DataStream<Message> stream = env.addSource(flinkKafkaConsumer);
 
-        stream.print();
-        env.execute("simple streaming from kafka");
+        //场景一: 输出到控制台
+        //stream.print();
+        //场景二: 输出到kafka
+        DataStream<String> text = stream.map(new MapFunction<Message, String>() {
+            @Override
+            public String map(Message message) throws Exception {
+                return "{" + message.data + "}";
+            }
+        });
+        FlinkKafkaProducer011<String> myProducer = new FlinkKafkaProducer011<>(kafkaBrokers, kafkaProdTopic, new SimpleStringSchema());
+        text.addSink(myProducer);
+
+        env.execute("streaming from kafka to domac's kafka");
     }
 
     //自定义消息格式
@@ -61,6 +77,7 @@ public class SimpleStreamingFromKafka {
         }
     }
 
+    //自定义消费 DeserializationSchema
     public static class MessageDeserializer implements DeserializationSchema<Message> {
 
         @Override
@@ -80,4 +97,5 @@ public class SimpleStreamingFromKafka {
             return TypeExtractor.getForClass(Message.class);
         }
     }
+
 }
