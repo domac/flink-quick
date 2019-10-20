@@ -7,6 +7,7 @@ import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.java.BatchTableEnvironment;
+import org.apache.flink.table.sinks.CsvTableSink;
 
 
 public class SimpleSQLQuery {
@@ -60,13 +61,14 @@ public class SimpleSQLQuery {
         DataSet<Result> result = tableEnv.toDataSet(queryResult, Result.class);
 
         //算子
-        result.map(new MapFunction<Result, Tuple2<String, Integer>>() {
+        DataSet<Tuple2<String, Integer>> mapResult = result.map(new MapFunction<Result, Tuple2<String, Integer>>() {
             @Override
             public Tuple2<String, Integer> map(Result result) throws Exception {
                 return Tuple2.of(result.club, result.total_goals);
             }
-        }).print(); //控制台输出
-
+        });
+        mapResult.print();
+        //env.execute();
     }
 
 

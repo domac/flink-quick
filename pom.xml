@@ -18,6 +18,7 @@
         <module>flink-quick-04</module>
         <module>flink-quick-05</module>
         <module>flink-quick-06</module>
+        <module>flink-quick-07</module>
     </modules>
 
     <properties>
