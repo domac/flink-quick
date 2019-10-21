@@ -1,8 +1,7 @@
 package com.domac;
 
-import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.serialization.DeserializationSchema;
-import org.apache.flink.api.common.serialization.SimpleStringSchema;
+import org.apache.flink.api.common.serialization.SerializationSchema;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.typeutils.TypeExtractor;
 import org.apache.flink.streaming.api.datastream.DataStream;
@@ -10,7 +9,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer011;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer011;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.Properties;
 
 /**
@@ -46,25 +45,48 @@ public class SimpleStreamingFromKafka {
         //场景一: 输出到控制台
         //stream.print();
         //场景二: 输出到kafka
-        DataStream<String> text = stream.map(new MapFunction<Message, String>() {
+        /*DataStream<String> text = stream.map(new MapFunction<Message, String>() {
             @Override
             public String map(Message message) throws Exception {
                 return "{" + message.data + "}";
             }
         });
         FlinkKafkaProducer011<String> myProducer = new FlinkKafkaProducer011<>(kafkaBrokers, kafkaProdTopic, new SimpleStringSchema());
-        text.addSink(myProducer);
+        text.addSink(myProducer);*/
+
+        //场景三: 自定义schema的方式
+        FlinkKafkaProducer011<Message> myProducer = new FlinkKafkaProducer011<>(kafkaBrokers, kafkaProdTopic, new SimpleMessageSchema());
+        stream.addSink(myProducer);
 
         env.execute("streaming from kafka to domac's kafka");
     }
 
     //自定义消息格式
-    public static class Message {
+    public static class Message implements Serializable {
+
+        private static final long serialVersionUID = 3559533002594201715L;
+
         String name;
         String data;
 
         public Message(String name, String data) {
             this.name = name;
+            this.data = data;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getData() {
+            return data;
+        }
+
+        public void setData(String data) {
             this.data = data;
         }
 
@@ -90,6 +112,37 @@ public class SimpleStreamingFromKafka {
         @Override
         public boolean isEndOfStream(Message message) {
             return false;
+        }
+
+        @Override
+        public TypeInformation<Message> getProducedType() {
+            return TypeExtractor.getForClass(Message.class);
+        }
+    }
+
+
+    public static class SimpleMessageSchema implements DeserializationSchema<Message>, SerializationSchema<Message> {
+        @Override
+        public Message deserialize(byte[] bytes) throws IOException {
+            ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+            ObjectInputStream is = new ObjectInputStream(in);
+            Message obj = null;
+            try {
+                obj = (Message) is.readObject();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            return obj;
+        }
+
+        @Override
+        public boolean isEndOfStream(Message message) {
+            return false;
+        }
+
+        @Override
+        public byte[] serialize(Message message) {
+            return message.data.getBytes();
         }
 
         @Override
