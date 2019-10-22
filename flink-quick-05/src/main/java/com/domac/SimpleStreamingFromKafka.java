@@ -17,6 +17,10 @@ import java.util.Properties;
  * <p>
  * ./kafka-console-consumer.sh --bootstrap-server 192.168.159.130:9092 --topic your_test_topic --from-beginning
  */
+
+/**
+ * author: domacli@tencent.com
+ */
 public class SimpleStreamingFromKafka {
 
     public static void main(String[] args) throws Exception {
