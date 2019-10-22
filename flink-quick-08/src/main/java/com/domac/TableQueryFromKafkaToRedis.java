@@ -2,12 +2,14 @@ package com.domac;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.Setter;
+import org.apache.flink.api.common.functions.FilterFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.serialization.DeserializationSchema;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.typeutils.TypeExtractor;
 import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer011;
 import org.apache.flink.table.api.Table;
@@ -35,21 +37,30 @@ public class TableQueryFromKafkaToRedis {
         DataStream<LogData> stream = env.addSource(flinkKafkaConsumer);
 
         StreamTableEnvironment tableEnv = StreamTableEnvironment.getTableEnvironment(env);
+
         Table logsTable = tableEnv.fromDataStream(stream);
         tableEnv.registerTable("edrlog", logsTable);
+
+        //tableEnv.registerDataStream("edrlog", stream);
 
         String querySQL = "select count(1) as cnt from edrlog";
         Table queryResult = tableEnv.sqlQuery(querySQL);
 
-
         DataStream<Tuple2<Boolean, Long>> result = tableEnv.toRetractStream(queryResult, Long.class);
 
-        DataStream<Long> count = result.map(new MapFunction<Tuple2<Boolean, Long>, Long>() {
+
+        DataStream<Long> count = result.filter(new FilterFunction<Tuple2<Boolean, Long>>() {
+            @Override
+            public boolean filter(Tuple2<Boolean, Long> out) throws Exception {
+                return out.f0;
+            }
+        }).map(new MapFunction<Tuple2<Boolean, Long>, Long>() {
             @Override
             public Long map(Tuple2<Boolean, Long> out) throws Exception {
                 return out.f1;
             }
         });
+
         count.print();
         env.execute("table query from kafka to redis");
     }
