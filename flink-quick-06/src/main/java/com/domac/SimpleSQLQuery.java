@@ -44,7 +44,7 @@ public class SimpleSQLQuery {
         //设置执行环境
         ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
-        BatchTableEnvironment tableEnv = BatchTableEnvironment.getTableEnvironment(env);
+        BatchTableEnvironment tableEnv = BatchTableEnvironment.create(env);
 
         //设置DataSet
         DataSet<Player> csvInput = env.readCsvFile(input).ignoreFirstLine()

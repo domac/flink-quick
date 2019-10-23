@@ -9,7 +9,6 @@ import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.api.java.typeutils.TypeExtractor;
 import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer011;
 import org.apache.flink.table.api.Table;
@@ -36,12 +35,10 @@ public class TableQueryFromKafkaToRedis {
         FlinkKafkaConsumer011<LogData> flinkKafkaConsumer = new FlinkKafkaConsumer011<>(kafkaTopic, new MessageDeserializer(), properties);
         DataStream<LogData> stream = env.addSource(flinkKafkaConsumer);
 
-        StreamTableEnvironment tableEnv = StreamTableEnvironment.getTableEnvironment(env);
+        StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env);
 
         Table logsTable = tableEnv.fromDataStream(stream);
         tableEnv.registerTable("edrlog", logsTable);
-
-        //tableEnv.registerDataStream("edrlog", stream);
 
         String querySQL = "select count(1) as cnt from edrlog";
         Table queryResult = tableEnv.sqlQuery(querySQL);
@@ -69,9 +66,6 @@ public class TableQueryFromKafkaToRedis {
 
         @Override
         public LogData deserialize(byte[] data) throws IOException {
-
-            String test = new String(data);
-
             return JSONObject.parseObject(data, LogData.class);
         }
 

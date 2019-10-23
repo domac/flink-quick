@@ -46,7 +46,7 @@ public interface SimpleSQLQueryOutPut {
 
 
         ExecutionEnvironment env = ExecutionEnvironment.getExecutionEnvironment();
-        BatchTableEnvironment tableEnv = BatchTableEnvironment.getTableEnvironment(env);
+        BatchTableEnvironment tableEnv = BatchTableEnvironment.create(env);
 
         DataSource<String> dataSource = env.readTextFile(input);
         DataSet<Student> inputData = dataSource.map(new MapFunction<String, Student>() {
