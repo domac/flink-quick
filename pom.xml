@@ -20,6 +20,7 @@
         <module>flink-quick-06</module>
         <module>flink-quick-07</module>
         <module>flink-quick-08</module>
+        <module>flink-quick-09</module>
     </modules>
 
     <properties>
