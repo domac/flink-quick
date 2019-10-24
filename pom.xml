@@ -21,6 +21,7 @@
         <module>flink-quick-07</module>
         <module>flink-quick-08</module>
         <module>flink-quick-09</module>
+        <module>flink-quick-10</module>
     </modules>
 
     <properties>
@@ -30,7 +31,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.lombok>1.18.10</maven.lombok>
-        <maven.scope>compile</maven.scope>
+        <maven.scope>provided</maven.scope>
     </properties>
 
     <dependencies>

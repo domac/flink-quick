@@ -1,0 +1,1 @@
+/data/svr/flink/bin/sql-client.sh embedded -d /data/svr/flink/conf/edrlog.yaml -l /data/svr/flink/sql-libs/
