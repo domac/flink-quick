@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Properties;
 
-public class TableQueryFromKafkaToRedis {
+public class TableQueryFromKafkaToStdout {
 
     public static void main(String[] args) throws Exception {
 
