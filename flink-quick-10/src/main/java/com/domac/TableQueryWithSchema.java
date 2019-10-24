@@ -48,7 +48,7 @@ public class TableQueryWithSchema {
                         .field("Rawlog", Types.POJO(RawLog.class))
                 ).inAppendMode().registerTableSource("agentLogs");
 
-        String querySQL = "select Mid, Rawlog.OptCmdline from agentLogs";
+        String querySQL = "select Mid, Rawlog.SubFilePath, Rawlog.Op, Rawlog.Type from agentLogs where Rawlog.Type > 1";
         Table result = tableEnv.sqlQuery(querySQL);
 
         tableEnv.toRetractStream(result, Row.class).print();

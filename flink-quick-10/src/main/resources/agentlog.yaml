@@ -6,7 +6,7 @@
 
 tables: # empty list
   # A typical table source definition looks like:
-  - name: edrdata
+  - name: agentdata
     type: source
     update-mode: append
     connector:
@@ -25,7 +25,7 @@ tables: # empty list
     format:
       property-version: 1
       type: json
-      schema: "ROW(Ver VARCHAR, Mid VARCHAR, Plugin VARCHAR, Tag VARCHAR, Rawlog VARCHAR, Time VARCHAR)"
+      schema: "ROW(Ver VARCHAR, Mid VARCHAR, Plugin VARCHAR, Tag VARCHAR, Rawlog ROW(OptCmdline VARCHAR,OptProcPath VARCHAR), Time VARCHAR)"
     schema:
       - name: Ver
         type: VARCHAR
@@ -39,7 +39,6 @@ tables: # empty list
         type: VARCHAR
       - name: Time
         type: VARCHAR
-
 #==============================================================================
 # User-defined functions
 #==============================================================================
