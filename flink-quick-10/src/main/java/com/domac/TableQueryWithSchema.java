@@ -10,6 +10,7 @@ import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.java.StreamTableEnvironment;
 import org.apache.flink.table.descriptors.Json;
 import org.apache.flink.table.descriptors.Kafka;
+import org.apache.flink.table.descriptors.Rowtime;
 import org.apache.flink.table.descriptors.Schema;
 import org.apache.flink.types.Row;
 
@@ -44,14 +45,18 @@ public class TableQueryWithSchema {
                         .field("Mid", Types.STRING)
                         .field("Plugin", Types.STRING)
                         .field("Tag", Types.STRING)
-                        .field("Time", Types.STRING)
+                        .field("Time", Types.LONG)
+                        .field("event_time", Types.SQL_TIMESTAMP).rowtime(new Rowtime() //定义时间时间
+                                .timestampsFromField("event_timestamp")//event_timestamp 格式必须是 2019-10-24T22:18:30.000Z
+                                .watermarksPeriodicBounded(1000))
                         .field("Rawlog", Types.POJO(RawLog.class))
                 ).inAppendMode().registerTableSource("agentLogs");
 
-        String querySQL = "select Mid, Rawlog.SubFilePath, Rawlog.Op, Rawlog.Type from agentLogs where Rawlog.Type > 1";
+        //String querySQL = "select TUMBLE_END(event_time, INTERVAL '2' HOUR) from agentLogs group by TUMBLE(event_time, INTERVAL '2' HOUR)";
+        String querySQL = "select * from agentLogs";
         Table result = tableEnv.sqlQuery(querySQL);
 
-        tableEnv.toRetractStream(result, Row.class).print();
+        tableEnv.toAppendStream(result, Row.class).print();
         env.execute("table json query");
     }
 
