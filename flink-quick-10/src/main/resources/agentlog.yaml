@@ -131,8 +131,15 @@ tables: # empty list
         type: VARCHAR
       - name: EdrVersion
         type: VARCHAR
-      - name: event_timestamp
+      - name: event_time
         type: TIMESTAMP
+        rowtime:
+          timestamps:
+            type: "from-field"
+            from: "event_timestamp"
+          watermarks:
+            type: "periodic-bounded"
+            delay: "60000"
 
 #==============================================================================
 # User-defined functions
