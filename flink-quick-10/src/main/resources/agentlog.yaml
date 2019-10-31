@@ -25,7 +25,7 @@ tables: # empty list
     format:
       property-version: 1
       type: json
-      schema: "ROW(Ver VARCHAR, Mid VARCHAR, Plugin VARCHAR, Tag VARCHAR, Rawlog ROW(OptCmdline VARCHAR,OptProcPath VARCHAR), Time VARCHAR)"
+      schema: "ROW(Ver VARCHAR, Mid VARCHAR, Plugin VARCHAR, Tag VARCHAR, Time BIGINT,process_timestamp TIMESTAMP, Type INT, Op INT, OptPid BIGINT, OptProcPath VARCHAR,OptFileSize INT, OptModifyTime BIGINT,OptProcName VARCHAR, OptCmdline VARCHAR, OptPPid BIGINT,OptStdin VARCHAR, OptStdout VARCHAR, OptProcMd5 VARCHAR,OptProcUserName VARCHAR,OptProcUid BIGINT,OptProcGroupName VARCHAR, OptProcGid BIGINT, OptScanResult INT,SubFileName VARCHAR, SubFilePath VARCHAR, SubPid BIGINT, SubProcCmdline VARCHAR,SubUserName VARCHAR, SubUid BIGINT, SubGroupName VARCHAR,SubGid BIGINT, SubProcStdin VARCHAR,SubProcStdout VARCHAR, SubFileSize BIGINT, SubModifyTime BIGINT, SubFileMd5 VARCHAR,SubFileType INT, SubScanResult INT, SubLIP VARCHAR, SubRIP VARCHAR, SubLPort INT, SubRPort INT,SubNetStatus VARCHAR, SubNetProto VARCHAR, LogName VARCHAR, LogText VARCHAR, LogOffset BIGINT,Platform INT, OsVersion VARCHAR, Os6432 INT, IPList VARCHAR, EdrVersion VARCHAR, event_timestamp TIMESTAMP)"
     schema:
       - name: Ver
         type: VARCHAR
@@ -35,10 +35,105 @@ tables: # empty list
         type: VARCHAR
       - name: Tag
         type: VARCHAR
-      - name: Rawlog
-        type: VARCHAR
       - name: Time
+        type: BIGINT
+      - name: process_timestamp
+        type: TIMESTAMP
+      - name: Type
+        type: INT
+      - name: Op
+        type: INT
+      - name: OptPid
+        type: BIGINT
+      - name: OptProcPath
         type: VARCHAR
+      - name: OptFileSize
+        type: INT
+      - name: OptModifyTime
+        type: BIGINT
+      - name: OptProcName
+        type: VARCHAR
+      - name: OptCmdline
+        type: VARCHAR
+      - name: OptPPid
+        type: BIGINT
+      - name: OptStdin
+        type: VARCHAR
+      - name: OptStdout
+        type: VARCHAR
+      - name: OptProcMd5
+        type: VARCHAR
+      - name: OptProcUserName
+        type: VARCHAR
+      - name: OptProcUid
+        type: BIGINT
+      - name: OptProcGroupName
+        type: VARCHAR
+      - name: OptProcGid
+        type: BIGINT
+      - name: OptScanResult
+        type: INT
+      - name: SubFileName
+        type: VARCHAR
+      - name: SubFilePath
+        type: VARCHAR
+      - name: SubPid
+        type: BIGINT
+      - name: SubProcCmdline
+        type: VARCHAR
+      - name: SubUserName
+        type: VARCHAR
+      - name: SubUid
+        type: BIGINT
+      - name: SubGroupName
+        type: VARCHAR
+      - name: SubGid
+        type: BIGINT
+      - name: SubProcStdin
+        type: VARCHAR
+      - name: SubProcStdout
+        type: VARCHAR
+      - name: SubFileSize
+        type: BIGINT
+      - name: SubModifyTime
+        type: BIGINT
+      - name: SubFileMd5
+        type: VARCHAR
+      - name: SubFileType
+        type: INT
+      - name: SubScanResult
+        type: INT
+      - name: SubLIP
+        type: VARCHAR
+      - name: SubRIP
+        type: VARCHAR
+      - name: SubLPort
+        type: INT
+      - name: SubRPort
+        type: INT
+      - name: SubNetStatus
+        type: VARCHAR
+      - name: SubNetProto
+        type: VARCHAR
+      - name: LogName
+        type: VARCHAR
+      - name: LogText
+        type: VARCHAR
+      - name: LogOffset
+        type: BIGINT
+      - name: Platform
+        type: INT
+      - name: OsVersion
+        type: VARCHAR
+      - name: Os6432
+        type: INT
+      - name: IPList
+        type: VARCHAR
+      - name: EdrVersion
+        type: VARCHAR
+      - name: event_timestamp
+        type: TIMESTAMP
+
 #==============================================================================
 # User-defined functions
 #==============================================================================
@@ -64,7 +159,7 @@ execution:
   # allow 'event-time' or only 'processing-time' in sources
   time-characteristic: event-time
   # interval in ms for emitting periodic watermarks
-  periodic-watermarks-interval: 200
+  periodic-watermarks-interval: 1000
   # 'changelog' or 'table' presentation of results
   result-mode: table
   # maximum number of maintained rows in 'table' presentation of results
