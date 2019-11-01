@@ -25,14 +25,14 @@ public class SimpleUdf {
         System.out.println("----------------------");
 
         tableEnv.registerFunction("split", new Split("_"));
-        sql = "SELECT name, word, length FROM (VALUES ('Jack_Ma'), ('Pony_Ma'), ('Mac_li')) as MyCustomTable(name), LATERAL TABLE(split(name)) as T(word, length)";
+        sql = "SELECT name, word, length FROM (VALUES ('Jack_Ma'),('Pony_Ma'),('Mac_li')) as MyCustomTable(name), LATERAL TABLE(split(name)) as T(word, length)";
         result = tableEnv.sqlQuery(sql);
         tableEnv.toDataSet(result, Row.class).print();
 
         System.out.println("----------------------");
 
         tableEnv.registerFunction("trojanQuery", new TrojanQuery());
-        sql = "select mid, trojanQuery(mid) from (VALUES ('0096431a7a2c7313eb6272ac32f04639'), ('008fba2b987174a9b80e47bce8904335'), ('Mac-li')) as MyCustomTable(mid)";
+        sql = "select mid, trojanQuery(mid) from (VALUES ('0096431a7a2c7313eb6272ac32f04639'), ('008fba2b987174a9b80e47bce8904335'), ('Mac-li'),('008fba2b987174a9b80e47bce8904335'),('008fba2b987174a9b80e47bce8904335')) as MyCustomTable(mid)";
         result = tableEnv.sqlQuery(sql);
         tableEnv.toDataSet(result, Row.class).print();
 

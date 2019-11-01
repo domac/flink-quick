@@ -7,9 +7,12 @@ import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.annotation.JsonIgn
 import org.apache.flink.table.functions.ScalarFunction;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 
 public class TrojanQuery extends ScalarFunction {
+
+    private HashMap<String, Integer> results;
 
     public static class Result implements Serializable {
 
@@ -41,9 +44,17 @@ public class TrojanQuery extends ScalarFunction {
 
 
     public TrojanQuery() {
+        //引入缓存
+        results = new HashMap<String, Integer>();
     }
 
     public int eval(String mid) {
+
+        if (results.containsKey(mid)) {
+            System.out.println("hit from cache");
+            return results.get(mid);
+        }
+
         HttpClient httpClient = MyHttpClient.getInstance();
         httpClient.getParams().setSoTimeout(200);
         PostMethod postMethod = new PostMethod("http://localhost:10029/query?md5=" + mid);
@@ -53,7 +64,9 @@ public class TrojanQuery extends ScalarFunction {
                 String text = postMethod.getResponseBodyAsString();
                 List<Result> res = JSON.parseArray(text, Result.class);
                 if (res.size() > 0) {
-                    return res.get(0).SafeLevel;
+                    int resCode = res.get(0).SafeLevel;
+                    results.put(mid, resCode);
+                    return resCode;
                 }
             }
         } catch (Exception e) {
