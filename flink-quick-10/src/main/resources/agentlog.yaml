@@ -25,7 +25,7 @@ tables: # empty list
     format:
       property-version: 1
       type: json
-      schema: "ROW(Ver VARCHAR, Mid VARCHAR, Plugin VARCHAR, Tag VARCHAR, Time BIGINT,process_timestamp TIMESTAMP, Type INT, Op INT, OptPid BIGINT, OptProcPath VARCHAR,OptFileSize INT, OptModifyTime BIGINT,OptProcName VARCHAR, OptCmdline VARCHAR, OptPPid BIGINT,OptStdin VARCHAR, OptStdout VARCHAR, OptProcMd5 VARCHAR,OptProcUserName VARCHAR,OptProcUid BIGINT,OptProcGroupName VARCHAR, OptProcGid BIGINT, OptScanResult INT,SubFileName VARCHAR, SubFilePath VARCHAR, SubPid BIGINT, SubProcCmdline VARCHAR,SubUserName VARCHAR, SubUid BIGINT, SubGroupName VARCHAR,SubGid BIGINT, SubProcStdin VARCHAR,SubProcStdout VARCHAR, SubFileSize BIGINT, SubModifyTime BIGINT, SubFileMd5 VARCHAR,SubFileType INT, SubScanResult INT, SubLIP VARCHAR, SubRIP VARCHAR, SubLPort INT, SubRPort INT,SubNetStatus VARCHAR, SubNetProto VARCHAR, LogName VARCHAR, LogText VARCHAR, LogOffset BIGINT,Platform INT, OsVersion VARCHAR, Os6432 INT, IPList VARCHAR, EdrVersion VARCHAR, event_timestamp TIMESTAMP)"
+      schema: "ROW(Ver VARCHAR, Mid VARCHAR, Plugin VARCHAR, Tag VARCHAR, Time BIGINT,process_timestamp TIMESTAMP, Type INT, Op INT, OptPid BIGINT, OptProcPath VARCHAR,OptFileSize INT, OptModifyTime BIGINT,OptProcName VARCHAR, OptCmdline VARCHAR, OptPPid BIGINT,OptStdin VARCHAR, OptStdout VARCHAR, OptProcMd5 VARCHAR,OptProcUserName VARCHAR,OptProcUid BIGINT,OptProcGroupName VARCHAR, OptProcGid BIGINT, OptScanResult INT,SubFileName VARCHAR, SubFilePath VARCHAR, SubPid BIGINT, SubProcCmdline VARCHAR,SubUserName VARCHAR, SubUid BIGINT, SubGroupName VARCHAR,SubGid BIGINT, SubProcStdin VARCHAR,SubProcStdout VARCHAR, SubFileSize BIGINT, SubModifyTime BIGINT, SubFileMd5 VARCHAR,SubFileType INT, SubScanResult INT, SubLIP VARCHAR, SubRIP VARCHAR, SubLPort INT, SubRPort INT,SubNetStatus VARCHAR, SubNetProto VARCHAR, LogName VARCHAR, LogText VARCHAR, LogOffset BIGINT,Platform INT, OsVersion VARCHAR, Os6432 INT, IPList VARCHAR, EdrVersion VARCHAR,EventId BIGINT,event_timestamp TIMESTAMP)"
     schema:
       - name: Ver
         type: VARCHAR
@@ -131,6 +131,8 @@ tables: # empty list
         type: VARCHAR
       - name: EdrVersion
         type: VARCHAR
+      - name: EventId
+        type: BIGINT
       - name: event_time
         type: TIMESTAMP
         rowtime:
