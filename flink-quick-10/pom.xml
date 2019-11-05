@@ -71,6 +71,7 @@
             <groupId>org.apache.flink</groupId>
             <artifactId>flink-cep_2.11</artifactId>
             <version>${flink.version}</version>
+            <scope>${maven.scope}</scope>
         </dependency>
 
     </dependencies>

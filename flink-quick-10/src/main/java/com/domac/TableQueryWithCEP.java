@@ -123,7 +123,7 @@ public class TableQueryWithCEP {
                         .field("EventId", Types.LONG)
                         .field("event_time", Types.SQL_TIMESTAMP).rowtime(new Rowtime() //定义时间时间
                                 .timestampsFromField("event_timestamp")//event_timestamp 格式必须是 2019-10-24T22:18:30.000Z
-                                .watermarksPeriodicBounded(1000)
+                                .watermarksPeriodicBounded(60000)
                         )
                 ).inAppendMode().registerTableSource("agentLogs");
 
