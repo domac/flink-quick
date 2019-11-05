@@ -50,7 +50,7 @@ public class TableQueryWithCEP {
         }
 
         if (null == inputSQL) {
-            inputSQL = "SELECT * FROM agentLogs MATCH_RECOGNIZE (PARTITION BY Mid ORDER BY event_time MEASURES A.event_time AS first_time, A.SubFilePath AS first_path, B.event_time AS last_time, B.SubFilePath AS last_path ONE ROW PER MATCH AFTER MATCH SKIP PAST LAST ROW PATTERN (A M*? B) DEFINE A AS A.SubFilePath = '/usr/bin/python2.7',B AS B.SubFilePath = '/usr/bin/vim')";
+            inputSQL = "SELECT * FROM agentdata MATCH_RECOGNIZE (PARTITION BY Mid ORDER BY event_time MEASURES A.event_time AS first_time, A.SubFilePath AS first_path, B.event_time AS last_time, B.SubFilePath AS last_path ONE ROW PER MATCH AFTER MATCH SKIP PAST LAST ROW PATTERN (A M*? B) DEFINE A AS A.SubFilePath = '/usr/bin/python2.7',B AS B.SubFilePath = '/usr/bin/vim')";
         }
 
 
@@ -125,22 +125,17 @@ public class TableQueryWithCEP {
                                 .timestampsFromField("event_timestamp")//event_timestamp 格式必须是 2019-10-24T22:18:30.000Z
                                 .watermarksPeriodicBounded(60000)
                         )
-                ).inAppendMode().registerTableSource("agentLogs");
+                ).inAppendMode().registerTableSource("agentdata");
 
         //String querySQL = "select TUMBLE_END(event_time, INTERVAL '2' HOUR) from agentLogs group by TUMBLE(event_time, INTERVAL '2' HOUR)";
 
-        //inputSQL = "select * from agentLogs  ";
+        inputSQL = "select * from agentdata";
         Table result = tableEnv.sqlQuery(inputSQL);
 
         DataStream<Tuple2<Boolean, Row>> rowResult = tableEnv.toRetractStream(result, Row.class);
 
         //执行结果集
-        DataStream<Row> ds = rowResult.filter(new FilterFunction<Tuple2<Boolean, Row>>() {
-            @Override
-            public boolean filter(Tuple2<Boolean, Row> value) throws Exception {
-                return value.f0;
-            }
-        }).map(new MapFunction<Tuple2<Boolean, Row>, Row>() {
+        DataStream<Row> ds = rowResult.filter((FilterFunction<Tuple2<Boolean, Row>>) value -> value.f0).map(new MapFunction<Tuple2<Boolean, Row>, Row>() {
             @Override
             public Row map(Tuple2<Boolean, Row> value) throws Exception {
                 return value.f1;
