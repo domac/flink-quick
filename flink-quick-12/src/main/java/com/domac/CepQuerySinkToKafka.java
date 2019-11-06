@@ -143,7 +143,7 @@ public interface CepQuerySinkToKafka {
                 results.put(f, value.f1.getField(index));
                 index++;
             }
-            results.put("rule_seq", 1);
+            results.put("handle_seq", System.currentTimeMillis());
             return JSON.toJSON(results).toString();
         });
 
