@@ -20,6 +20,7 @@ import org.apache.flink.table.descriptors.Schema;
 import org.apache.flink.types.Row;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public interface CepQuerySinkToKafka {
 
@@ -143,7 +144,8 @@ public interface CepQuerySinkToKafka {
                 results.put(f, value.f1.getField(index));
                 index++;
             }
-            results.put("handle_seq", System.currentTimeMillis());
+            results.put("notify_id", UUID.randomUUID().toString());
+            results.put("notify_time", System.currentTimeMillis());
             return JSON.toJSON(results).toString();
         });
 
