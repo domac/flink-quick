@@ -129,7 +129,7 @@ public interface CepQuerySinkToKafka {
                 ).inAppendMode().registerTableSource("agentdata");
 
 
-        inputSQL = "select Mid, SubFilePath, event_time from agentdata";
+        inputSQL = "select * from agentdata";
         Table result = tableEnv.sqlQuery(inputSQL);
 
         //获取查询的字段名称
