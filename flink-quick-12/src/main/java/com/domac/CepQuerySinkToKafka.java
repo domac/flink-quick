@@ -40,17 +40,23 @@ public interface CepQuerySinkToKafka {
             //--kafka "192.168.159.130:9092"
             kafka = parameterTool.get("kafka");
 
+            inputSQL = parameterTool.get("inputSQL");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
         if (null == zk) {
-            zk = "192.168.159.130:2181";
+            zk = "9.134.72.22:2181";
         }
 
         if (null == kafka) {
-            kafka = "192.168.159.130:9092";
+            kafka = "9.134.72.22:9092";
+        }
+
+        if (null == inputSQL) {
+            inputSQL = "SELECT * FROM agentdata";
         }
 
 
@@ -129,7 +135,7 @@ public interface CepQuerySinkToKafka {
                 ).inAppendMode().registerTableSource("agentdata");
 
 
-        inputSQL = "select * from agentdata";
+        //inputSQL = "select * from agentdata";
         Table result = tableEnv.sqlQuery(inputSQL);
 
         //获取查询的字段名称
