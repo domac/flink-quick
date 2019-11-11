@@ -48,11 +48,11 @@ public interface CepQuerySinkToKafka {
 
 
         if (null == zk) {
-            zk = "9.134.72.22:2181";
+            zk = "192.168.159.131:2181";
         }
 
         if (null == kafka) {
-            kafka = "9.134.72.22:9092";
+            kafka = "192.168.159.131:9092";
         }
 
         if (null == inputSQL) {
